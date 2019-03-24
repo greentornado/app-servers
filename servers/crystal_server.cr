@@ -1,6 +1,8 @@
 require "http/server"
 
-HTTP::Server.new(9292) do |context|
+server = HTTP::Server.new do |context|
   context.response.content_type = "text/plain"
   context.response.print "Hello World"
-end.listen
+end
+
+server.listen(9292)

@@ -1,32 +1,40 @@
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-public class HelloWorld extends AbstractHandler {
+public class HelloWorld
+{
+	public static void main(String[] args) throws Exception
+        {
+                QueuedThreadPool threadPool = new QueuedThreadPool(15, 5);
+                Server server = new Server(threadPool);
+                ServerConnector connector = new ServerConnector(server);
+                connector.setPort(9292);
+                server.setConnectors(new Connector[]{connector});
 
-        @Override
-        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-                response.setContentType("text/plain;charset=utf-8");
-                response.setStatus(HttpServletResponse.SC_OK);
-                baseRequest.setHandled(true);
-                response.getWriter().println("Hello World");
-        }
+                ServletHandler servletHandler = new ServletHandler();
+                server.setHandler(servletHandler);
 
-        public static void main(String[] args) throws Exception {
-                QueuedThreadPool pool = new QueuedThreadPool();
-                pool.setMaxThreads(50);
-                Server server = new Server(pool);
-                ServerConnector http = new ServerConnector(server);
-                http.setPort(9292);
-                server.addConnector(http);
-                server.setHandler(new HelloWorld());
+                servletHandler.addServletWithMapping(HelloServlet.class, "/");
+
                 server.start();
                 server.join();
-        }
+	}
+	
+	public static class HelloServlet extends HttpServlet 
+	{		
+		protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+		{
+                        response.setContentType("text/plain; charset=utf-8");
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.getWriter().println("Hello World"); 
+                }
+        } 
 }

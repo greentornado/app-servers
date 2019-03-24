@@ -13,8 +13,13 @@ erl_crash.dump
 
 # Python
 /servers/__pycache__
+/servers/*.pyc
+/servers/.wsgi
+
+# Crystal
+*.dwarf
 
 # Executable
 crystal_server
-go_server
-nim_server
+fasthttp_server
+httpbeast_server
